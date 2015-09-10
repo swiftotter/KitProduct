@@ -1,0 +1,11 @@
+<config>
+    <modules>
+        <SwiftOtter_Sales>
+            <active>true</active>
+            <codePool>local</codePool>
+            <depends>
+                <SwiftOtter_Base/>
+            </depends>
+        </SwiftOtter_Sales>
+    </modules>
+</config>
