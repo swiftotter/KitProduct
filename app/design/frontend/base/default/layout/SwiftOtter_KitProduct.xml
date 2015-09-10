@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+<layout>
+    <PRODUCT_TYPE_kit translate="label" module="SwiftOtter_KitProduct">
+        <label>Catalog Product View (Kit)</label>
+        <reference name="product.info">
+            <block type="SwiftOtter_KitProduct/Catalog_Product_View_Type_Kit" name="product.info.kit" as="product_type_data" template="SwiftOtter/KitProduct/Catalog_Product_View_Type_Kit.phtml">
+                <block type="core/text_list" name="product.info.kit.extra" as="product_type_data_extra" translate="label">
+                    <label>Product Extra Info</label>
+                </block>
+            </block>
+        </reference>
+    </PRODUCT_TYPE_kit>
+
+    <checkout_cart_index>
+        <reference name="content">
+            <reference name="checkout.cart">
+                <action method="addItemRender"><type>kit</type><block>SwiftOtter_KitProduct/Cart_Item_Renderer</block><template>checkout/cart/item/default.phtml</template></action>
+            </reference>
+        </reference>
+    </checkout_cart_index>
+
+    <sales_order_view>
+        <reference name="order_items">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Order_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_order_view>
+
+    <sales_order_invoice>
+        <reference name="invoice_items">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Order_Invoice_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_order_invoice>
+
+    <sales_order_shipment>
+        <reference name="shipment_items">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Order_Shipment_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_order_shipment>
+
+    <sales_order_creditmemo>
+        <reference name="creditmemo_items">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Order_Creditmemo_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_order_creditmemo>
+
+    <!--
+    Print pages
+    -->
+
+    <sales_order_print>
+        <reference name="sales.order.print">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Order_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_order_print>
+
+    <sales_order_printinvoice>
+        <reference name="sales.order.print.invoice">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Order_Invoice_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_order_printinvoice>
+
+    <sales_order_printshipment>
+        <reference name="sales.order.print.shipment">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Order_Shipment_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_order_printshipment>
+
+    <sales_order_printcreditmemo>
+        <reference name="sales.order.print.creditmemo">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Order_Creditmemo_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_order_printcreditmemo>
+
+    <!--
+    For guests
+    -->
+    <sales_guest_view>
+        <reference name="order_items">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Order_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_guest_view>
+
+    <sales_guest_invoice>
+        <reference name="invoice_items">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Order_Invoice_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_guest_invoice>
+
+    <sales_guest_shipment>
+        <reference name="shipment_items">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Order_Shipment_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_guest_shipment>
+
+    <sales_guest_creditmemo>
+        <reference name="creditmemo_items">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Order_Creditmemo_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_guest_creditmemo>
+
+    <sales_guest_print>
+        <reference name="sales.order.print">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Order_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_guest_print>
+
+    <sales_guest_printinvoice>
+        <reference name="sales.order.print.invoice">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Order_Invoice_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_guest_printinvoice>
+
+    <sales_guest_printshipment>
+        <reference name="sales.order.print.shipment">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Order_Shipment_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_guest_printshipment>
+
+    <sales_guest_printcreditmemo>
+        <reference name="sales.order.print.creditmemo">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Order_Creditmemo_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_guest_printcreditmemo>
+
+    <!--
+    Emails
+    -->
+    <sales_email_order_items>
+        <reference name="items">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Email_Order_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_email_order_items>
+
+    <sales_email_order_invoice_items>
+        <reference name="items">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Email_Order_Invoice_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_email_order_invoice_items>
+
+
+    <sales_email_order_shipment_items>
+        <reference name="items">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Email_Order_Shipment_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_email_order_shipment_items>
+
+    <sales_email_order_creditmemo_items>
+        <reference name="items">
+            <action method="addItemRender"><type>grouped</type><block>SwiftOtter_KitProduct/Sales_Order_Items_Renderer</block><template>SwiftOtter/KitProduct/Email_Order_Creditmemo_Items_Renderer.phtml</template></action>
+        </reference>
+    </sales_email_order_creditmemo_items>
+
+</layout>
