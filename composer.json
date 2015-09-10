@@ -1,0 +1,17 @@
+{
+    "name": "SwiftOtter/EmailNotifications",
+    "description": "SwiftOtter's kit module makes a new product type that combines one or more products and allows specifying quantities for each product.",
+    "version": "1.0.0",
+    "type": "magento-module",
+    "require": {
+        "magento-hackathon/magento-composer-installer": "*",
+        "SwiftOtter/Base":"*",
+        "SwiftOtter/EmailNotifications":"*"
+    },
+    "authors":[
+        {
+            "name": "Joseph Maxwell",
+            "email": "joseph@swiftotter.com"
+        }
+    ]
+}
