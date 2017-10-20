@@ -1,11 +1,6 @@
 app/code/community/SwiftOtter/*                                 app/code/community/SwiftOtter/
-<<<<<<< HEAD
-=======
-
 app/design/adminhtml/default/default/template/SwiftOtter/*      app/design/adminhtml/default/default/template/SwiftOtter/
 app/design/adminhtml/default/default/layout/SwiftOtter/*        app/design/adminhtml/default/default/layout/SwiftOtter/
 app/design/frontend/base/default/template/SwiftOtter/*          app/design/frontend/base/default/template/SwiftOtter/
 app/design/frontend/base/default/layout/SwiftOtter/*            app/design/frontend/base/default/layout/SwiftOtter/
-
->>>>>>> 4f487ec3bf3b13e605d00c3e754420f2f005e028
 app/etc/modules/*                                               app/etc/modules/
