@@ -2,7 +2,6 @@
     "name": "swiftotter/kit-product",
     "description": "SwiftOtter's kit module makes a new product type that combines one or more products and allows specifying quantities for each product.",
     "type": "magento-module",
-    "version": "1.0.0",
     "require": {
         "magento-hackathon/magento-composer-installer": "*",
         "SwiftOtter/Base":"*",
