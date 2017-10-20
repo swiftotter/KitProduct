@@ -24,17 +24,18 @@ class SwiftOtter_KitProduct_Model_Cron
 
     public function reindexKitProducts()
     {
-        Mage::log('Kit reindex beginning.');
-
         $resource = Mage::getResourceModel('SwiftOtter_KitProduct/Stock_Indexer');
 
         foreach ($resource->getProducts() as $productId) {
-            Mage::log('Reindexing: ' . $productId);
             Mage::helper('SwiftOtter_KitProduct')->reindexStock($productId);
         }
 
-        Mage::log('Kit reindex finished.');
-
         $resource->truncate();
+    }
+
+    public function reindexAllProducts()
+    {
+        $products = Mage::getResourceModel('SwiftOtter_KitProduct/Stock_Indexer')->getKitProducts();
+        Mage::helper('SwiftOtter_KitProduct')->reindexStockMass($products);
     }
 }

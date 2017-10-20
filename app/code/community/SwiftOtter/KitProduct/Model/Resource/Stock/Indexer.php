@@ -176,9 +176,6 @@ class SwiftOtter_KitProduct_Model_Resource_Stock_Indexer extends Mage_Core_Model
 
             $result = $read->fetchRow($select);
 
-            Mage::log("Kit Reindex for: " . $kitProductId);
-            Mage::log($result);
-
             $rowsUpdated = $write->update(
                 $this->getTable('cataloginventory/stock_item'),
                 array(

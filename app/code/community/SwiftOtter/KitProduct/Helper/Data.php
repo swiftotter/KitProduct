@@ -81,19 +81,24 @@ class SwiftOtter_KitProduct_Helper_Data extends Mage_Core_Helper_Abstract
         return array(); //$options;
     }
 
-    public function addSubProductsToCart(Mage_Sales_Model_Quote_Item $configurableItem, Mage_Sales_Model_Quote_Item $kitItem)
+    public function addSubProductsToCart(Mage_Sales_Model_Quote_Item $configurableItem, Mage_Sales_Model_Quote_Item $kitItem,
+                                         Mage_Sales_Model_Quote $quote = null)
     {
-        if (Mage::app()->getStore()->isAdmin()) {
-            $quote = Mage::getSingleton('adminhtml/sales_order_create')->getQuote();
-        } else {
-            $quote = Mage::getSingleton('checkout/cart')->getQuote();
+        if (!$quote) {
+            if (Mage::app()->getStore()->isAdmin()) {
+                $quote = Mage::getSingleton('adminhtml/sales_order_create')->getQuote();
+            } else {
+                $quote = Mage::getSingleton('checkout/cart')->getQuote();
+            }
         }
 
         if (!$configurableItem->getId()) {
             $configurableItem->save();
         }
 
-        $products = $kitItem->getProduct()->getTypeInstance(true)->prepareForCartAdvanced(new Varien_Object(array('qty' => $configurableItem->getQty())), $kitItem->getProduct(), 'full');
+        $products = $kitItem->getProduct()->getTypeInstance(true)->prepareForCartAdvanced(
+            new Varien_Object(array('qty' => $configurableItem->getQty())), $kitItem->getProduct(), 'full'
+        );
         $option = $configurableItem->getOptionByCode('additional_options');
         $itemOptions = array();
 
@@ -104,13 +109,6 @@ class SwiftOtter_KitProduct_Helper_Data extends Mage_Core_Helper_Abstract
                 if (!$quoteItem || ($quoteItem->getParentItemId() !== $kitItem->getId() && $quoteItem->getParentItemId() !== $configurableItem->getId())) {
                     $quoteItem = Mage::getModel('sales/quote_item');
                     $quoteItem->setQuote($quote);
-                }
-
-                if (Mage::app()->getStore()->isAdmin()) {
-                    $quoteItem->setStoreId(Mage::app()->getStore()->getId());
-                }
-                else {
-                    $quoteItem->setStoreId(Mage::app()->getStore()->getId());
                 }
 
                 $quoteItem->setOptions($product->getCustomOptions())
@@ -124,7 +122,7 @@ class SwiftOtter_KitProduct_Helper_Data extends Mage_Core_Helper_Abstract
                 $itemOptions[] = sprintf('%d x %s (%s)', $quoteItem->getQty(), $product->getName(), $product->getSku());
             } else {
                 if ($quoteItem && $quoteItem->getParentItemId() == $configurableItem->getId()) {
-//                    $quoteItem->setQty($configurableItem->getQty());
+                    $quoteItem->setQty(1);
                 }
             }
         }
@@ -154,6 +152,8 @@ class SwiftOtter_KitProduct_Helper_Data extends Mage_Core_Helper_Abstract
                 $option->setValue(serialize($additional));
             }
         }
+
+        $configurableItem->save();
 
         return $this;
     }

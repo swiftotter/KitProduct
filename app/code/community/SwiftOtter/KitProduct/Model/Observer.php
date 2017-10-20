@@ -32,16 +32,47 @@ class SwiftOtter_KitProduct_Model_Observer
         }
     }
 
+    public function salesOrderSaveBefore(Varien_Object $observer)
+    {
+        $orderItems = $observer->getData('order')->getAllItems();
+
+        //PHG-2463: Ensure that the order is able to be marked complete if appropriate
+        Mage::helper('SwiftOtter_KitProduct/Order')->adjustChildItemsToCompleteOrder($orderItems);
+    }
+
     public function cataloginventoryStockItemSaveCommitAfter($observer)
     {
         /** @var Mage_CatalogInventory_Model_Stock_Item $item */
         $item = $observer->getItem();
         $productId = $item->getProductId();
 
-        if (!$item->getProduct()) {
-            $type = Mage::getResourceModel('SwiftOtter_KitProduct/Stock_Indexer')->getProductType($productId);
+        $this->_addProductToReindex($productId);
+    }
+
+    public function salesOrderItemCancel($observer)
+    {
+        /** @var Mage_Sales_Model_Order_Item $item */
+        $item = $observer->getItem();
+
+        $this->_addProductToReindex($item->getProductId());
+    }
+
+    public function salesCreditmemoItemSaveAfter($observer)
+    {
+        /** @var Mage_Sales_Model_Order_Creditmemo_Item $item */
+        $item = $observer->getCreditmemoItem();
+
+        $this->_addProductToReindex($item->getProductId());
+    }
+
+    protected function _addProductToReindex($product, $type = '')
+    {
+        if (is_object($product)) {
+            $type = $product->getTypeId();
+            $productId = $product->getId();
         } else {
-            $type = $item->getProduct()->getTypeId();
+            $type = Mage::getResourceModel('SwiftOtter_KitProduct/Stock_Indexer')->getProductType($product);
+            $productId = $product;
         }
 
         if ($type != SwiftOtter_KitProduct_Model_Product_Type_Kit::KIT_TYPE_CODE) {
@@ -56,9 +87,14 @@ class SwiftOtter_KitProduct_Model_Observer
         $items = $observer->getItems();
         if (Mage::app()->getStore()->isAdmin()) {
             $quote = Mage::getSingleton('adminhtml/sales_order_create')->getQuote();
+
+            if (!$quote->getId() && count($items) > 0) {
+                $firstItem = $items[0];
+                $quote = $firstItem->getQuote();
+            }
         } else {
             $quote = Mage::getSingleton('checkout/cart')->getQuote();
-        };
+        }
 
         $configurableType = Mage_Catalog_Model_Product_Type_Configurable::TYPE_CODE;
 
@@ -83,34 +119,26 @@ class SwiftOtter_KitProduct_Model_Observer
         if (($configurableItem && !$configurableItem->getId()) ||
             ($kitItem && !$kitItem->getId())) {
 
-            $quote->save();
+            $quote->setDataChanges(true)
+                ->save();
         }
 
         if ($configurableItem && $configurableItem->getId()
             && $kitItem && $kitItem->getId()) {
-            Mage::helper('SwiftOtter_KitProduct')->addSubProductsToCart($configurableItem, $kitItem);
+            Mage::helper('SwiftOtter_KitProduct')->addSubProductsToCart($configurableItem, $kitItem, $quote);
 
             $quote->save();
         }
+
+        $fakeObserver = new Varien_Object();
+        $fakeObserver->setData('quote', $quote);
+
+        $this->normalizeOptions($fakeObserver);
     }
 
-    public function adminhtmlSalesOrderItemCollectionLoadAfter($observer)
+    public function normalizeOptions($observer)
     {
-//        $collection = $observer->getOrderItemCollection();
-//        $isNewInvoice = Mage::app()->getRequest()->getControllerName() == 'sales_order_invoice' && Mage::app()->getRequest()->getActionName() == 'new';
-//
-//        /** @var Mage_Sales_Model_Order_Item $orderItem */
-//        foreach ($collection as $orderItem) {
-//            if (!$orderItem->getParentItemId() && $orderItem->getProductType() == SwiftOtter_KitProduct_Model_Product_Type_Kit::KIT_TYPE_CODE && $isNewInvoice) {
-//                $orderItem->setIsVirtual(true);
-//                $orderItem->setParentItemId(1);
-//                $orderItem->setParentItem(Mage::getModel('sales/order_item'));
-//            }
-//
-//            if ($orderItem->getParentItemId() && $orderItem->getProductType() == Mage_Catalog_Model_Product_Type_Grouped::TYPE_CODE && $isNewInvoice) {
-//                $orderItem->setParentItemId(null);
-//            }
-//        }
+        Mage::helper('SwiftOtter_KitProduct/Quote')->normalizeOptions($observer->getData('quote'));
     }
 
     public function salesConvertQuoteItemToOrderItem($observer)
@@ -121,9 +149,12 @@ class SwiftOtter_KitProduct_Model_Observer
         /** @var Mage_Sales_Model_Order_Item $orderItem */
         $orderItem = $observer->getOrderItem();
 
-        if (!$orderItem->getParentItemId() && $orderItem->getProductType() == SwiftOtter_KitProduct_Model_Product_Type_Kit::KIT_TYPE_CODE) {
-//            $orderItem->setIsVirtual(true);
+        if ($quoteItem->getParentItem() && $quoteItem->getParentItem()->getProductType() == 'simpleconfigurable' &&
+            $orderItem->getProductType() == SwiftOtter_KitProduct_Model_Product_Type_Kit::KIT_TYPE_CODE) {
+            $orderItem->setQtyOrdered($quoteItem->getParentItem()->getQty());
+        }
 
+        if (!$orderItem->getParentItemId() && $orderItem->getProductType() == SwiftOtter_KitProduct_Model_Product_Type_Kit::KIT_TYPE_CODE) {
             $options = $orderItem->getProductOptions();
             $options['shipment_type'] = Mage_Catalog_Model_Product_Type_Abstract::SHIPMENT_SEPARATELY;
             foreach ($options as $name => $option) {
@@ -143,20 +174,6 @@ class SwiftOtter_KitProduct_Model_Observer
 
         if ($orderItem->getQuoteParentItemId() && $orderItem->getProductType() == Mage_Catalog_Model_Product_Type_Grouped::TYPE_CODE) {
             $options = $orderItem->getProductOptions();
-            if (isset($options['super_product_config'])) {
-                $parentProduct = Mage::getModel('catalog/product')->load($options['super_product_config']['product_id']);
-
-                $association = array(
-                    'label' => Mage::helper('SwiftOtter_KitProduct')->__('Parent Product'),
-                    'value' => sprintf('%s (%s)', $parentProduct->getName(), $parentProduct->getSku())
-                );
-
-                if (!isset($options['options'])) {
-                    $options['options'] = array();
-                }
-                $options['options'][] = $association;
-            }
-
             $orderItem->setProductOptions($options);
         }
 
@@ -170,5 +187,4 @@ class SwiftOtter_KitProduct_Model_Observer
             $orderItem->setProductOptions($options);
         }
     }
-
 }

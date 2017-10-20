@@ -1,21 +1,12 @@
 {
-<<<<<<< HEAD
-    "name": "SwiftOtter/Sales",
-    "description": "SwiftOtter's sales module builds out Magento's sales functionality.",
-=======
-    "name": "SwiftOtter/EmailNotifications",
+    "name": "swiftotter/kit-product",
     "description": "SwiftOtter's kit module makes a new product type that combines one or more products and allows specifying quantities for each product.",
->>>>>>> 4f487ec3bf3b13e605d00c3e754420f2f005e028
-    "version": "1.0.0",
     "type": "magento-module",
+    "version": "1.0.0",
     "require": {
         "magento-hackathon/magento-composer-installer": "*",
-<<<<<<< HEAD
-        "SwiftOtter/Base":"*"
-=======
         "SwiftOtter/Base":"*",
         "SwiftOtter/EmailNotifications":"*"
->>>>>>> 4f487ec3bf3b13e605d00c3e754420f2f005e028
     },
     "authors":[
         {

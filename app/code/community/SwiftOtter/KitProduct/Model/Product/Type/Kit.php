@@ -79,14 +79,32 @@ class SwiftOtter_KitProduct_Model_Product_Type_Kit extends Mage_Catalog_Model_Pr
         return $quote;
     }
 
+    protected function _uniqueProductArray(array $products) : array
+    {
+        $output = [];
 
+        array_walk($products, function(Mage_Catalog_Model_Product $product) use (&$output) {
+            if (!isset($output[$product->getId()])) {
+                $output[$product->getId()] = $product;
+            }
+        });
+
+        return array_values($output);
+    }
 
     protected function _prepareProduct(Varien_Object $buyRequest, $product, $processMode)
     {
         $isStrictProcessMode = $this->_isStrictProcessMode($processMode);
         $requestGroup = $buyRequest->getSuperGroup();
 
-        if (!$requestGroup) {
+        $requestQty = 0;
+        if (is_array($requestGroup)) {
+            foreach ($requestGroup as $productId => $qty) {
+                $requestQty += $qty;
+            }
+        }
+
+        if (!$requestGroup || !$requestQty) {
             $requestGroup = $this->_getAssociatedProducts($product);
             $buyRequest->setSuperGroup($requestGroup);
         }
@@ -95,75 +113,60 @@ class SwiftOtter_KitProduct_Model_Product_Type_Kit extends Mage_Catalog_Model_Pr
         if (is_string($products)) { //Unfortunately, there is a kit without physical products in it
             $products = array($product);
         }
-
-        $hasMainProduct = false;
-        $mainProductIndex = -1;
-        $i = 0;
-
-        foreach($products as $productIterate) {
-            if ($productIterate->getId() == $product->getId()) {
-                $hasMainProduct = true;
-                $mainProductIndex = $i;
-            }
-            $i++;
-        }
-
-        if ($hasMainProduct) {
-            unset($products[$mainProductIndex]);
-        }
+        $products = $this->_uniqueProductArray($products);
+        $products = array_filter($products, function(Mage_Catalog_Model_Product $check) use ($product) {
+            return $check->getId() !== $product->getId();
+        });
 
         /** @var Mage_Catalog_Model_Product $mainProduct */
-        $mainProduct = $product;
-        $mainProductId = $mainProduct->getId();
-        $mainProduct->setCartQty($buyRequest->getQty());
-        $mainProduct->setQty($buyRequest->getQty());
-        array_unshift($products, $mainProduct);
+        $product->setCartQty($buyRequest->getQty());
+        $product->setQty($buyRequest->getQty());
 
-        $subProducts = array();
-        $optionDisplay = array();
+        $subProducts = [];
+        $optionDisplay = [];
         $optionOutput = '';
-        $printOutput = array();
+        $printOutput = [];
 
         /** @var Mage_Catalog_Model_Product $productIterate */
-        foreach($products as $productIterate) {
-            if ($productIterate !== $mainProduct && isset($requestGroup)) {
-                $productIterate->setParentProductId($mainProductId);
-                $qty = $requestGroup[$productIterate->getId()];
+        array_walk($products, function(Mage_Catalog_Model_Product $child) use ($product, &$requestGroup, &$printOutput, &$optionDisplay, &$subProducts, &$optionOutput) {
+            $child->setData('parent_product_id', $product->getId());
+            $qty = $requestGroup[$child->getId()];
 
-                $mainProduct->addCustomOption('product_qty_' . $productIterate->getId(), $qty, $productIterate);
-                $productIterate->setQty($qty)
-                    ->setCartQty($qty);
+            $product->addCustomOption('product_qty_' . $child->getId(), $qty, $product);
 
-                $subProducts[] = $productIterate->getId();
-                $optionDisplay[] = array(
-                    'sku' => $productIterate->getSku(),
-                    'name' => $productIterate->getName(),
-                    'qty' => $qty,
-                    'id' => $productIterate->getId()
-                );
+            $subProducts[] = $child->getId();
+            $optionDisplay[] = array(
+                'sku' => $child->getSku(),
+                'name' => $child->getName(),
+                'qty' => $qty,
+                'id' => $child->getId()
+            );
 
-                $value = '';
-                if ($qty) {
-                    $value .= sprintf('%d', $qty) . ' x ';
-                }
-                $value .= $productIterate->getName();
-                $value .= ' (' . $productIterate->getSku() . ')';
-
-                $printOutput[] = $value;
-
-                if ($qty > 0) {
-                    $optionOutput .= $value . "<br/>";
-                }
+            $value = '';
+            if ($qty) {
+                $value .= sprintf('%d', $qty) . ' x ';
             }
-        }
+            $value .= $child->getName();
+            $value .= ' (' . $child->getSku() . ')';
 
-        $optionText = array(array(
-            'label' => Mage::helper('SwiftOtter_KitProduct')->__('Included Products'),
-            'value' => $optionOutput,
-            'print_value' => implode(', ', $printOutput)
-        ));
+            $printOutput[] = $value;
+
+            if ($qty > 0) {
+                $optionOutput .= $value . "<br/>";
+            }
+        });
+
+        array_unshift($products, $product);
+
+        $optionText = [
+            [
+                'label' => Mage::helper('SwiftOtter_KitProduct')->__('Included Products'),
+                'value' => $optionOutput,
+                'print_value' => implode(', ', $printOutput)
+            ]
+        ];
+
         $product->addCustomOption('additional_options', serialize($optionText));
-
         $product->addCustomOption('kit_products_ids', serialize($subProducts));
         $product->addCustomOption('kit_product_options', serialize($optionDisplay));
 

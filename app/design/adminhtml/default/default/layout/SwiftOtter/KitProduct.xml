@@ -22,51 +22,9 @@
         </reference>
     </adminhtml_sales_order_view>
 
-    <!--<adminhtml_sales_order_invoice_new>-->
-        <!--<reference name="order_items">-->
-            <!--<action method="addItemRender"><type>kit</type><block>SwiftOtter_KitProduct/Adminhtml_Sales_Order_Items_Renderer</block><template>sales/invoice/create/items/renderer/default.phtml</template></action>-->
-        <!--</reference>-->
-    <!--</adminhtml_sales_order_invoice_new>-->
-
-    <!--<adminhtml_sales_order_invoice_updateqty>-->
-        <!--<reference name="order_items">-->
-            <!--<action method="addItemRender"><type>kit</type><block>SwiftOtter_KitProduct/Adminhtml_Sales_Order_Items_Renderer</block><template>sales/invoice/create/items/renderer/default.phtml</template></action>-->
-        <!--</reference>-->
-    <!--</adminhtml_sales_order_invoice_updateqty>-->
-
-    <!--<adminhtml_sales_order_invoice_view>-->
-        <!--<reference name="invoice_items">-->
-            <!--<action method="addItemRender"><type>kit</type><block>SwiftOtter_KitProduct/Adminhtml_Sales_Order_Items_Renderer</block><template>sales/invoice/view/items/renderer/default.phtml</template></action>-->
-        <!--</reference>-->
-    <!--</adminhtml_sales_order_invoice_view>-->
-
-    <!--<adminhtml_sales_order_shipment_new>-->
-        <!--<reference name="order_items">-->
-            <!--<action method="addItemRender"><type>kit</type><block>SwiftOtter_KitProduct/Adminhtml_Sales_Order_Items_Renderer</block><template>sales/shipment/create/items/renderer/default.phtml</template></action>-->
-        <!--</reference>-->
-    <!--</adminhtml_sales_order_shipment_new>-->
-
-    <!--<adminhtml_sales_order_shipment_view>-->
-        <!--<reference name="shipment_items">-->
-            <!--<action method="addItemRender"><type>kit</type><block>SwiftOtter_KitProduct/Adminhtml_Sales_Order_Items_Renderer</block><template>sales/shipment/view/items/renderer/default.phtml</template></action>-->
-        <!--</reference>-->
-    <!--</adminhtml_sales_order_shipment_view>-->
-
-    <!--<adminhtml_sales_order_creditmemo_new>-->
-        <!--<reference name="order_items">-->
-            <!--<action method="addItemRender"><type>kit</type><block>SwiftOtter_KitProduct/Adminhtml_Sales_Order_Items_Renderer</block><template>sales/creditmemo/create/items/renderer/default.phtml</template></action>-->
-        <!--</reference>-->
-    <!--</adminhtml_sales_order_creditmemo_new>-->
-
-    <!--<adminhtml_sales_order_creditmemo_updateqty>-->
-        <!--<reference name="order_items">-->
-            <!--<action method="addItemRender"><type>kit</type><block>SwiftOtter_KitProduct/Adminhtml_Sales_Order_Items_Renderer</block><template>sales/creditmemo/create/items/renderer/default.phtml</template></action>-->
-        <!--</reference>-->
-    <!--</adminhtml_sales_order_creditmemo_updateqty>-->
-
-    <!--<adminhtml_sales_order_creditmemo_view>-->
-        <!--<reference name="creditmemo_items">-->
-            <!--<action method="addItemRender"><type>kit</type><block>SwiftOtter_KitProduct/Adminhtml_Sales_Order_Items_Renderer</block><template>sales/creditmemo/view/items/renderer/default.phtml</template></action>-->
-        <!--</reference>-->
-    <!--</adminhtml_sales_order_creditmemo_view>-->
+    <adminhtml_sales_order_create_index>
+        <reference name="head">
+            <action method="addJs"><file>swiftotter/adminhtml/sales-override.js</file></action>
+        </reference>
+    </adminhtml_sales_order_create_index>
 </layout>
