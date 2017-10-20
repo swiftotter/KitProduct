@@ -4,8 +4,8 @@
     "type": "magento-module",
     "require": {
         "magento-hackathon/magento-composer-installer": "*",
-        "SwiftOtter/Base":"*",
-        "SwiftOtter/EmailNotifications":"*"
+        "swiftotter/base":"*",
+        "swiftotter/email-notifications":"*"
     },
     "authors":[
         {
