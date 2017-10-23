@@ -1,7 +1,5 @@
 <?php
 /**
- * 
- *
  * @author Joseph Maxwell
  * @copyright Swift Otter Studios, 3/14/13
  * @package default
@@ -209,6 +207,21 @@ class SwiftOtter_KitProduct_Model_Product_Type_Kit extends Mage_Catalog_Model_Pr
     }
 
 
+    /**
+     * @param $product
+     * @return mixed
+     */
+    public function getAssociatedFilteredProductsCollection($product)
+    {
+        $collection = $this->getAssociatedProductCollection($product)
+            ->addAttributeToSelect('*')
+            ->addFilterByRequiredOptions()
+            ->setPositionOrder()
+            ->addStoreFilter($this->getStoreFilter($product))
+            ->addAttributeToFilter('status', array('in' => $this->getStatusFilters($product)));
+
+        return $collection;
+    }
 
     /**
      * Retrieve array of associated products
@@ -227,12 +240,7 @@ class SwiftOtter_KitProduct_Model_Product_Type_Kit extends Mage_Catalog_Model_Pr
                 $this->setSaleableStatus($product);
             }
 
-            $collection = $this->getAssociatedProductCollection($product)
-                ->addAttributeToSelect('*')
-                ->addFilterByRequiredOptions()
-                ->setPositionOrder()
-                ->addStoreFilter($this->getStoreFilter($product))
-                ->addAttributeToFilter('status', array('in' => $this->getStatusFilters($product)));
+            $collection = $this->getAssociatedFilteredProductsCollection($product);
 
             /** @var Mage_Catalog_Model_Product $item */
             foreach ($collection as $item) {
@@ -269,6 +277,8 @@ class SwiftOtter_KitProduct_Model_Product_Type_Kit extends Mage_Catalog_Model_Pr
         }
         return $this->getProduct($product)->getData($this->_keyAssociatedProducts);
     }
+
+
 
     protected function _mergeProducts ($keepProduct, $discardProduct)
     {
