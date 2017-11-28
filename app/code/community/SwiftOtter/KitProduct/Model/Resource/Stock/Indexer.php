@@ -161,28 +161,39 @@ class SwiftOtter_KitProduct_Model_Resource_Stock_Indexer extends Mage_Core_Model
                 $condition = " AND (`inventory`.manage_stock = 1 OR `inventory`.use_config_manage_stock = 1)";
             }
 
+            $columnsSelected = [
+                'is_in_stock' => new Zend_Db_Expr('MIN(is_in_stock)'),
+                'qty' => new Zend_Db_Expr('MIN(qty / IF(quantity_attribute_table.value = 0, 1, quantity_attribute_table.value))')
+            ];
+
+            if ($read->tableColumnExists($this->getTable('cataloginventory/stock_item'), 'qty_on_hand')) {
+                $columnsSelected['qty_on_hand'] =
+                    new Zend_Db_Expr('MIN(qty_on_hand / IF(quantity_attribute_table.value = 0, 1, quantity_attribute_table.value))');
+            }
+
 
             $select->joinInner(
                 array('inventory' => $this->getTable('cataloginventory/stock_item')),
                 'link.linked_product_id = inventory.product_id' . $condition,
-                array(
-                    'is_in_stock' => new Zend_Db_Expr('MIN(is_in_stock)'),
-                    'qty' => new Zend_Db_Expr('MIN(qty / IF(quantity_attribute_table.value = 0, 1, quantity_attribute_table.value))'),
-                    'qty_on_hand' => new Zend_Db_Expr('MIN(qty_on_hand / IF(quantity_attribute_table.value = 0, 1, quantity_attribute_table.value))')
-                )
+                $columnsSelected
             );
 
             $select->group('link.product_id');
 
             $result = $read->fetchRow($select);
 
+            $rowsToUpdate = [
+                'is_in_stock' => $result['is_in_stock'],
+                'qty' => floor($result['qty'])
+            ];
+
+            if ($read->tableColumnExists($this->getTable('cataloginventory/stock_item'), 'qty_on_hand')) {
+                $rowsToUpdate['qty_on_hand'] = floor($result['qty_on_hand']);
+            }
+
             $rowsUpdated = $write->update(
                 $this->getTable('cataloginventory/stock_item'),
-                array(
-                    'is_in_stock' => $result['is_in_stock'],
-                    'qty' => floor($result['qty']),
-                    'qty_on_hand' => floor($result['qty_on_hand'])
-                ),
+                $rowsToUpdate,
                 $write->quoteInto('product_id = ?', $kitProductId)
             );
 
