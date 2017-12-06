@@ -77,7 +77,7 @@ class SwiftOtter_KitProduct_Model_Product_Type_Kit extends Mage_Catalog_Model_Pr
         return $quote;
     }
 
-    protected function _uniqueProductArray(array $products) : array
+    protected function _uniqueProductArray(array $products)
     {
         $output = [];
 
