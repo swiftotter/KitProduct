@@ -21,16 +21,17 @@
 
 class SwiftOtter_KitProduct_Helper_Quote extends Mage_Core_Helper_Abstract
 {
-    public function normalizeOptions($quote)
+    public function normalizeOptions(Mage_Sales_Model_Quote $quote)
     {
-        $items = Mage::getResourceSingleton('SwiftOtter_Base/Helper')->collectionToArray($quote->getItemsCollection()->load());
+        $items = $quote->getItemsCollection()->getItems();
 
         array_walk($items, function(Mage_Sales_Model_Quote_Item $item) {
             if (!($additionalOptions = $item->getOptionByCode('additional_options'))) {
                 return;
             }
 
-            if ($item->getProductType() == SwiftOtter_SimpleConfigurable_Model_Product_Type_SimpleConfigurable::SIMPLE_TYPE) {
+            if (class_exists("SwiftOtter_SimpleConfigurable_Model_Product_Type_SimpleConfigurable") &&
+                $item->getProductType() == SwiftOtter_SimpleConfigurable_Model_Product_Type_SimpleConfigurable::SIMPLE_TYPE) {
                 return;
             }
 
