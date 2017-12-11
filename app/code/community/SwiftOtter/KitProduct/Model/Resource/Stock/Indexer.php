@@ -182,6 +182,18 @@ class SwiftOtter_KitProduct_Model_Resource_Stock_Indexer extends Mage_Core_Model
 
             $result = $read->fetchRow($select);
 
+            if ($result === false) {
+                $rowsToUpdate = [
+                    'is_in_stock' => 1,
+                    'qty' => 1000
+                ];
+            } else {
+                $rowsToUpdate = [
+                    'is_in_stock' => $result['is_in_stock'],
+                    'qty' => floor($result['qty'])
+                ];
+            }
+            
             $rowsToUpdate = [
                 'is_in_stock' => $result['is_in_stock'],
                 'qty' => floor($result['qty'])
