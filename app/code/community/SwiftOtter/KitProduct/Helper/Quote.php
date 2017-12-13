@@ -44,7 +44,7 @@ class SwiftOtter_KitProduct_Helper_Quote extends Mage_Core_Helper_Abstract
         });
     }
 
-    protected function normalizeOption (array $value, int $qty) : array
+    protected function normalizeOption (array $value, $qty)
     {
         if (!isset($value['items'])) {
             return $value;
@@ -57,7 +57,7 @@ class SwiftOtter_KitProduct_Helper_Quote extends Mage_Core_Helper_Abstract
         return $value;
     }
 
-    protected function normalizeOptionString (string $value, int $qty) : string
+    protected function normalizeOptionString ($value, $qty)
     {
         $options = unserialize($value);
         $options = $this->normalizeOption($options, $qty);
