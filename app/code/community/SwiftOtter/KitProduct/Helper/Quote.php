@@ -30,8 +30,7 @@ class SwiftOtter_KitProduct_Helper_Quote extends Mage_Core_Helper_Abstract
                 return;
             }
 
-            if (class_exists("SwiftOtter_SimpleConfigurable_Model_Product_Type_SimpleConfigurable") &&
-                $item->getProductType() == SwiftOtter_SimpleConfigurable_Model_Product_Type_SimpleConfigurable::SIMPLE_TYPE) {
+            if ($item->getProductType() == 'simpleconfigurable') {
                 return;
             }
 

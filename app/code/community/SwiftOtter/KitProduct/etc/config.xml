@@ -36,11 +36,6 @@
         <catalog>
             <product>
                 <type>
-                    <simpleconfigurable>
-                        <allow_product_types>
-                            <kit/>
-                        </allow_product_types>
-                    </simpleconfigurable>
                     <configurable>
                         <allow_product_types>
                             <kit/>
