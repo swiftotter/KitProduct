@@ -74,6 +74,10 @@ class SwiftOtter_KitProduct_Model_Observer
             $type = Mage::getResourceModel('SwiftOtter_KitProduct/Stock_Indexer')->getProductType($product);
             $productId = $product;
         }
+        
+        if (!$productId) {
+            return;
+        }
 
         if ($type != SwiftOtter_KitProduct_Model_Product_Type_Kit::KIT_TYPE_CODE) {
             Mage::getResourceModel('SwiftOtter_KitProduct/Stock_Indexer')->addProduct($productId);
