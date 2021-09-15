@@ -53,7 +53,12 @@ class SwiftOtter_KitProduct_Helper_Data extends Mage_Core_Helper_Abstract
         $product = $item->getProduct();
         /** @var SwiftOtter_KitProduct_Model_Product_Type_Kit $typeInstance */
         $typeInstance = $product->getTypeInstance(true);
-        $serializedKitProducts = $item->getOptionByCode('kit_product_options')->getValue();
+
+        $kitProductOptions = $item->getOptionByCode('kit_product_options');
+        $serializedKitProducts = $kitProductOptions
+            ? $kitProductOptions->getValue()
+            : null;
+
 
         if ($serializedKitProducts) {
             $kitProducts = unserialize($serializedKitProducts);
